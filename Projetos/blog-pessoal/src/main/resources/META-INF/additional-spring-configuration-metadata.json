@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "acelera.jwt-secret-token",
+    "type": "java.lang.String",
+    "description": "A description for 'acelera.jwt-secret-token'"
+  },
+  {
+    "name": "default-page-size",
+    "type": "java.lang.String",
+    "description": "A description for 'default-page-size'"
+  }
+]}
