@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-BlogPessoalAceleraMakerApplication<blog-pessoal>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.montreal.acelera.blog_pessoal.BlogPessoalAceleraMakerApplication",
+            "projectName": "blog-pessoal",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
