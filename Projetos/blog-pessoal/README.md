@@ -59,31 +59,32 @@ Backend Spring Boot para plataforma de blog pessoal com:
 | JUnit 5             | Testes unitários                    |
 
 ## 🔍 Estrutura do Projeto
+```plaintext
 src/
 ├── main/
-│ ├── java/
-│ │ └── com/
-│ │ └── montreal/
-│ │ └── acelera/
-│ │ └── blog_pessoal/
-│ │ ├── config/ # Configurações e Segurança
-│ │ ├── controller/ # Endpoints REST
-│ │ ├── dto/ # Objetos de transferência
-│ │ ├── model/ # Entidades JPA
-│ │ ├── repository/ # Interfaces de dados
-│ │ ├── service/ # Lógica de negócio
-│ │ └── specifications/ # Especificações para filtrar
-│ └── resources/
-│ ├── application.properties # Configurações
-│ └── sonar-project.properties # SonarQube
-└── test/ # Testes automatizados
-
+│   ├── java/
+│   │   └── com/
+│   │       └── montreal/
+│   │           └── acelera/
+│   │               └── blog_pessoal/
+│   │                   ├── config/             # Configurações e Segurança
+│   │                   ├── controller/         # Endpoints REST
+│   │                   ├── dto/                # Objetos de transferência
+│   │                   ├── model/              # Entidades JPA
+│   │                   ├── repository/         # Interfaces de dados
+│   │                   ├── service/            # Lógica de negócio
+│   │                   └── specifications/     # Especificações para filtrar
+│   └── resources/
+│       ├── application.properties              # Configurações
+│       └── sonar-project.properties            # SonarQube
+└── test/                                       # Testes automatizados
+```
 
 ## 📚 Documentação da API
 
 Acesse a documentação interativa:
 
-- Swagger UI: `http://localhost:8080//swagger-ui/api-docs`
+- Swagger UI: `http://localhost:8080/swagger-ui/api-docs`
 
 ## 🚀 Configuração do Ambiente
 
