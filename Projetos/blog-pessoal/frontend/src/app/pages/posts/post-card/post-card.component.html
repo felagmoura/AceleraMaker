@@ -1,0 +1,10 @@
+<div class="post-card">
+  <app-post-meta [post]="post" />
+  <app-post-title [titulo]="post.titulo" />
+  <app-post-actions
+        [postId]="post.id"
+        [isDraft]="post.isDraft"
+        (edit)="handleEdit()"
+        (delete)="handleDelete()"
+      />
+</div>

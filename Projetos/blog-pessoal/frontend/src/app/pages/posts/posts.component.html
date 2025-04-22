@@ -1,0 +1,9 @@
+<app-posts-header></app-posts-header>
+<app-posts-nav-tabs
+  (tabChange)="selectedTab.set($event)"
+  [activeTab]="selectedTab()"
+></app-posts-nav-tabs>
+<app-posts-list
+  [posts]="filteredPosts()"
+  (delete)="handleDeletePost($event.toString())"
+></app-posts-list>

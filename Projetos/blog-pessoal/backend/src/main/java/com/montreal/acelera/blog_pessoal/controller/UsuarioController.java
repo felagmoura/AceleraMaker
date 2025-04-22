@@ -34,6 +34,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+
+
 
 @RestController
 @RequestMapping("/api/usuario")
@@ -87,4 +90,20 @@ public class UsuarioController extends BaseController {
         usuarioService.deletarUsuario(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/buscar-por-id/{id}")
+    public ResponseEntity<UsuarioResponseDTO> buscarUsuarioPorId(@PathVariable Long id) 
+            throws ServiceException, InvalidRequestException, IllegalArgumentException {
+        UsuarioResponseDTO usuarioEncontrado = usuarioService.buscarUsuarioPorId(id);
+        return ResponseEntity.ok(usuarioEncontrado);
+    }
+    
+
+    @GetMapping("/buscar-por-usuario/{usuario}")
+    public ResponseEntity<UsuarioResponseDTO> buscarUsuarioPorUsuario (@PathVariable String usuario) 
+            throws ServiceException, InvalidRequestException, IllegalArgumentException {
+        UsuarioResponseDTO usuarioEncontrado = usuarioService.buscarUsuarioPorUsuario(usuario);
+        return ResponseEntity.ok(usuarioEncontrado);
+    }
+    
 }

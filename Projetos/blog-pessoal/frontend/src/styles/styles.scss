@@ -1,0 +1,18 @@
+@use 'variables';
+
+
+.light-theme {
+  --text-color: variables.$light-text-color;
+  --background-color: variables.$light-background-color;
+  --primary-color: variables.$light-primary-color;
+  --secondary-color: variables.$light-secondary-color;
+  --accent-color: variables.$light-accent-color;
+}
+
+.dark-theme {
+  --text-color: variables.$dark-text-color;
+  --background-color: variables.$dark-background-color;
+  --primary-color: variables.$dark-primary-color;
+  --secondary-color: variables.$dark-secondary-color;
+  --accent-color: variables.$dark-accent-color;
+}

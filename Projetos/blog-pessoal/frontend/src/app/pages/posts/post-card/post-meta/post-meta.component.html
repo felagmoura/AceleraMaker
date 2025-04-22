@@ -1,0 +1,5 @@
+<div class="post-meta">
+  <span *ngIf="post.isDraft">Draft</span>
+  <span *ngIf="!post.isDraft">Published</span>
+  • Created: {{ post.dataCriacao | date:'shortDate' }}
+</div>

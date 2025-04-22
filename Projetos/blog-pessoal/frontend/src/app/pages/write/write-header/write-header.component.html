@@ -1,0 +1,8 @@
+<header>
+  <button (click)="saveDraft.emit()" [disabled]="isLoading">
+    {{ isLoading ? 'Saving...' : 'Save Draft' }}
+  </button>
+  <button (click)="publish.emit()" [disabled]="isLoading">
+    {{ isLoading ? 'Publishing...' : 'Publish' }}
+  </button>
+</header>

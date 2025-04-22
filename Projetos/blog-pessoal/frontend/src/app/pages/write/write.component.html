@@ -1,0 +1,11 @@
+<app-write-header
+  [isLoading]="isLoading"
+  (publish)="onPublish()"
+  (saveDraft)="onSaveDraft()"
+/>
+<app-write-editor
+  [titulo]="titulo"
+  [texto]="texto"
+  (tituloChange)="titulo = $event"
+  (textoChange)="texto = $event"
+/>

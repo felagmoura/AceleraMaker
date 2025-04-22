@@ -1,0 +1,30 @@
+<header class="landing-header">
+  <div class="header-content">
+    <div class="logo-container">
+      <a routerLink="/home" class="logo">
+        <img src="assets/images/logo.png" alt="Logo" />
+      </a>
+    </div>
+
+    <div class="nav-container">
+      <nav class="header-nav">
+        <a routerLink="/about">Our Story</a>
+        <app-auth-action
+          label = "Write"
+          mode = "login"
+          styleType="link">
+        </app-auth-action>
+        <app-auth-action
+          label = "Sign In"
+          mode = "login"
+          styleType="link">
+        </app-auth-action>
+        <app-auth-action
+          label = "Get Started"
+          mode = "register"
+          styleType="button">
+        </app-auth-action>
+      </nav>
+    </div>
+  </div>
+</header>

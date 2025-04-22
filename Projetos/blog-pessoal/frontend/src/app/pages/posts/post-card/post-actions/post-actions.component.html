@@ -1,0 +1,11 @@
+<div class="app-post-actions">
+  <div class="app-post-actions">
+      <button (click)="edit.emit()">
+        {{ isDraft ? 'Continue Writing' : 'Edit' }}
+      </button>
+      @if (!isDraft) {
+        <button (click)="view.emit()">View</button>
+      }
+      <button (click)="delete.emit()">Delete</button>
+    </div>
+</div>

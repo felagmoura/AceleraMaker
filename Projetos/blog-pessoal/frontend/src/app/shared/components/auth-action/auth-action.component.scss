@@ -1,0 +1,41 @@
+.auth-action {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+
+  &.link {
+    color: #242424;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &.button {
+    background-color: #1a8917;
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 99px;
+    font-weight: bold;
+
+    &:hover {
+      background-color: #13710f;
+    }
+  }
+
+  &.hero {
+    font-size: 1.25rem;
+    padding: 0.75rem 2rem;
+    border-radius: 999px;
+    background-color: black;
+    color: white;
+    font-weight: 600;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+}

@@ -1,0 +1,43 @@
+<div class="modal-backdrop" *ngIf="isVisible" (click)="close()"></div>
+
+<div class="modal" *ngIf="isVisible">
+  <div class="modal-content">
+    <h2 class="modal-title">{{ title }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!-- Error message -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="mode === 'register'" class="form-group">
+        <label>Nome</label>
+        <input type="text" formControlName="nome" aria-label="Nome"/>
+      </div>
+
+      <div class="form-group">
+        <label>Usuário</label>
+        <input type="text" formControlName="usuario" aria-label="usuario"/>
+      </div>
+
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" formControlName="senha" aria-label="Senha"/>
+      </div>
+
+      <div *ngIf="mode === 'register'" class="form-group">
+        <label>Foto</label>
+        <input type="text" formControlName="foto" aria-label="foto"/>
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="isLoading">
+        {{ isLoading ? 'Processing...' : (mode === 'login' ? 'Sign in' : 'Get started') }}
+      </button>
+    </form>
+
+    <div class="modal-footer">
+      <span>{{ footerMessage }}</span>
+      <a (click)="toggleMode()">{{ footerAction }}</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<button
+  *ngIf="styleType !== 'link'; else linkTpl"
+  [ngClass]="['auth-action', styleType]"
+  (click)="handleClick()"
+>
+  {{ label }}
+</button>
+
+<ng-template #linkTpl>
+  <a href="#" class="auth-action link" (click)="handleClick(); $event.preventDefault()">
+    {{ label }}
+  </a>
+</ng-template>

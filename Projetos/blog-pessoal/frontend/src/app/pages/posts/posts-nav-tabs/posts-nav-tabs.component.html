@@ -1,0 +1,16 @@
+<div class="posts-nav-tabs">
+  <nav>
+    <button
+      (click)="tabChange.emit('published')"
+      [class]="getTabClass('published')"
+    >
+      Publicados
+    </button>
+    <button
+      (click)="tabChange.emit('drafts')"
+      [class]="getTabClass('drafts')"
+    >
+      Rascunhos
+    </button>
+  </nav>
+</div>
