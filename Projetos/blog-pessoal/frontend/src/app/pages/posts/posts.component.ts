@@ -3,7 +3,7 @@ import { PostHeaderComponent } from './posts-header/posts-header.component';
 import { PostsNavTabsComponent } from './posts-nav-tabs/posts-nav-tabs.component';
 import { PostsListComponent } from './posts-list/posts-list.component';
 import { PostService } from '../../core/services/post.service';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [
     CommonModule,
-    AsyncPipe,
     PostHeaderComponent,
     PostsNavTabsComponent,
     PostsListComponent,

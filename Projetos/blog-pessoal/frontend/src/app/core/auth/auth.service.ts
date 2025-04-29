@@ -78,30 +78,22 @@ export class AuthService {
   }
 
   login(credentials: { usuario: string; senha: string }): Observable<void> {
-    return this.http.post<AuthResponse>('http://localhost:8080/api/auth/login', credentials).pipe(
-      switchMap((authResponse) =>
-        this.fetchUserData(credentials.usuario).pipe(
-          map((user) => ({ authResponse, user }))
-        )
-      ),
-      tap(({ authResponse, user }) => {
-        afterNextRender(() => {
+    return this.http
+      .post<AuthResponse>('http://localhost:8080/api/auth/login', credentials)
+      .pipe(
+        switchMap((authResponse) =>
+          this.fetchUserData(credentials.usuario).pipe(
+            map((user) => ({ authResponse, user }))
+          )
+        ),
+        tap(({ authResponse, user }) => {
           this._token.set(authResponse.token);
           this._user.set(user);
           this.setSecureStorage(authResponse.token, user);
-        });
-      }),
-      delay(0),
-      tap(() => {
-        afterNextRender(() => {
-          this.router.navigateByUrl('/posts', {
-            onSameUrlNavigation: 'reload'
-          });
-        });
-      }),
-      map(() => undefined),
-      catchError((error) => this.handleAuthError(error))
-    );
+        }),
+        map(() => undefined),
+        catchError((error) => this.handleAuthError(error))
+      );
   }
 
   register(userData: {
@@ -110,30 +102,22 @@ export class AuthService {
     senha: string;
     foto?: string;
   }): Observable<void> {
-    return this.http.post<AuthResponse>('http://localhost:8080/api/auth/register', userData).pipe(
-      switchMap((authResponse) =>
-        this.fetchUserData(userData.usuario).pipe(
-          map((user) => ({ authResponse, user }))
-        )
-      ),
-      tap(({ authResponse, user }) => {
-        afterNextRender(() => {
+    return this.http
+      .post<AuthResponse>('http://localhost:8080/api/auth/register', userData)
+      .pipe(
+        switchMap((authResponse) =>
+          this.fetchUserData(userData.usuario).pipe(
+            map((user) => ({ authResponse, user }))
+          )
+        ),
+        tap(({ authResponse, user }) => {
           this._token.set(authResponse.token);
           this._user.set(user);
           this.setSecureStorage(authResponse.token, user);
-        });
-      }),
-      delay(0),
-      tap(() => {
-        afterNextRender(() => {
-          this.router.navigateByUrl('/posts', {
-            onSameUrlNavigation: 'reload'
-          });
-        });
-      }),
-      map(() => undefined),
-      catchError((error) => this.handleAuthError(error))
-    );
+        }),
+        map(() => undefined),
+        catchError((error) => this.handleAuthError(error))
+      );
   }
 
   private fetchUserData(usuario: string): Observable<User> {
