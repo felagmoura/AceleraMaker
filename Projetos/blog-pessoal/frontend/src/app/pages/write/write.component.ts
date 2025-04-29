@@ -4,11 +4,11 @@ import { AuthService } from '../../core/auth/auth.service';
 import { PostService } from '../../core/services/post.service';
 import { PostCreateDTO } from '../../core/models/post-create-dto';
 import { WriteEditorComponent } from './write-editor/write-editor.component';
-import { WriteHeaderComponent } from './write-header/write-header.component';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-write',
-  imports: [WriteEditorComponent, WriteHeaderComponent],
+  imports: [WriteEditorComponent, HeaderComponent],
   templateUrl: './write.component.html',
   styleUrl: './write.component.scss',
 })

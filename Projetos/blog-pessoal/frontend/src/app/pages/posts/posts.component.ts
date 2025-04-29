@@ -6,6 +6,7 @@ import { PostService } from '../../core/services/post.service';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-posts',
@@ -15,6 +16,7 @@ import { Router } from '@angular/router';
     PostHeaderComponent,
     PostsNavTabsComponent,
     PostsListComponent,
+    HeaderComponent
   ],
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss'],

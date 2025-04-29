@@ -1,0 +1,20 @@
+<header class="loged-header">
+  <div class="header-content">
+    <div class="logo-container">
+      <a routerLink="/posts" class="logo">
+        <img src="assets/images/logo.png" alt="Logo" />
+      </a>
+    </div>
+    <div class="conditional-content-container">
+
+    </div>
+    <div class="user-container">
+      <app-user-icon
+        [user]="currentUser()"
+        (signOut)="handleSignOut()"
+        (navigate)="handleNavigation($event)"
+      />
+    </div>
+
+  </div>
+</header>

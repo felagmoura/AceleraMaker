@@ -1,0 +1,25 @@
+<ul class="dropdown-menu" *ngIf="user">
+  <li class="user-info">
+    <div class="user-details">
+      <strong>{{ user.usuario }}</strong>
+      <small>{{ user.nome }}</small>
+    </div>
+  </li>
+
+  <li *ngFor="let item of menuItems">
+    <button
+      class="dropdown-item"
+      (click)="handleNavigation(item.route)"
+    >
+      <span class="icon">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+    </button>
+  </li>
+
+  <li>
+    <button class="dropdown-item sign-out" (click)="signOut.emit()">
+      <span class="icon">🚪</span>
+      <span>Sign Out</span>
+    </button>
+  </li>
+</ul>

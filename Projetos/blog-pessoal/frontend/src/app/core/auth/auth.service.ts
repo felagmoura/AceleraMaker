@@ -3,17 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, catchError, tap, throwError, map, of, switchMap, delay } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { User } from '../models/user'
 
 interface AuthResponse {
   token: string;
   expiration?: Date | null;
-}
-
-interface User {
-  id?: number;
-  nome?: string;
-  usuario: string;
-  foto?: string;
 }
 
 @Injectable({

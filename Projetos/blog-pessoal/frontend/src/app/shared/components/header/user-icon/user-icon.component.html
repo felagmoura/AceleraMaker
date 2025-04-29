@@ -1,0 +1,33 @@
+<div class="user-icon-container">
+  <button
+    class="user-icon-button"
+    (click)="toggleDropdown($event)"
+    aria-label="User menu"
+    aria-haspopup="true"
+  >
+    <ng-container *ngIf="user as userData">
+      <img
+        *ngIf="userData.foto; else noPhoto"
+        [src]="userData.foto"
+        alt="User profile"
+        class="profile-image"
+        referrerpolicy="no-referrer"
+      />
+      <ng-template #noPhoto>
+        <div class="default-avatar">
+          {{ getInitials(userData.usuario) || '?' }}
+        </div>
+      </ng-template>
+    </ng-container>
+  </button>
+
+
+  @if (isDropdownOpen) {
+    <app-user-dropdown
+    *ngIf="isDropdownOpen"
+    [user]="user"
+    (navigate)="navigate.emit($event)"
+    (signOut)="signOut.emit()"
+    />
+  }
+</div>
