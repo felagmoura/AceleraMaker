@@ -1,11 +1,15 @@
-<input
-  type="text"
-  placeholder="Titulo"
-  [value]="titulo"
-  (input)="onTituloChange($event)"
-/>
-<textarea
-  placeholder="Tell your story..."
-  [value]="texto"
-  (input)="onTextoChange($event)"
-></textarea>
+<div class="titulo-container">
+  <input
+    type="text"
+    placeholder="Título"
+    [value]="titulo"
+    (input)="onTituloChange($event)"
+  />
+</div>
+<div class="texto-container">
+  <textarea
+    placeholder="Conte o que você está pensando..."
+    [value]="texto"
+    (input)="onTextoChange($event)"
+  ></textarea>
+</div>

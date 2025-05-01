@@ -1,0 +1,25 @@
+@use '../../../styles/variables';
+
+:host {
+  display: block;
+  height: 100vh;
+  background-color: variables.$dark-background-color;
+  font-family: variables.$font-family-serif;
+  color: variables.$dark-text-color;
+  padding-top: variables.$spacing-xl;
+}
+
+app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+app-write-editor {
+  display: block;
+  max-width: variables.$spacing-max-width;
+  margin: 0 auto;
+  padding: variables.$spacing-md variables.$spacing-md;
+}

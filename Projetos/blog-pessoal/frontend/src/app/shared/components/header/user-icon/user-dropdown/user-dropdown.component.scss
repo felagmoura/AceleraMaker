@@ -1,0 +1,62 @@
+@use '../../../../../../styles/variables';
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 200px;
+  background-color: variables.$dark-background-color;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  list-style: none;
+  padding: variables.$spacing-sm 0;
+  margin: 0;
+  z-index: 1001;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  .user-info {
+    padding: variables.$spacing-sm variables.$spacing-md;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+
+      strong {
+        font-size: variables.$font-size-base;
+        font-weight: 500;
+      }
+
+      small {
+        font-size: variables.$font-size-sm;
+        color: variables.$dark-secondary-text-color;
+      }
+    }
+  }
+
+  .dropdown-item {
+    width: 100%;
+    padding: variables.$spacing-sm variables.$spacing-md;
+    text-align: left;
+    background: none;
+    border: none;
+    color: variables.$dark-text-color;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-sm;
+    font-size: variables.$font-size-sm;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .icon {
+      font-size: variables.$font-size-sm;
+    }
+
+    &.sign-out {
+      color: #f70909;
+    }
+  }
+}

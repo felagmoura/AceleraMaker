@@ -1,0 +1,63 @@
+@use '../../../../styles/variables';
+
+:host {
+  display: block;
+}
+
+.titulo-container {
+  input {
+    display: block;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: variables.$font-size-lg;
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    padding: 0;
+    background-color: inherit;
+    color: inherit;
+    font-family: inherit;
+
+    &::placeholder {
+      color: variables.$dark-secondary-text-color;
+    }
+  }
+}
+
+.texto-container{
+  textarea {
+    display: block;
+    width: 100%;
+    min-height: 500px;
+    resize: none;
+    border: none;
+    outline: none;
+    font-size: variables.$font-size-base;
+    line-height: 1.6;
+    margin-bottom: variables.$spacing-md;
+    padding: 0;
+    color: inherit;
+    background-color: inherit;
+    font-family: inherit;
+
+    &::placeholder {
+      color: variables.$dark-secondary-text-color;
+      font-weight: 400;
+    }
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: variables.$dark-secondary-text-color;
+      border-radius: 20px;
+    }
+
+  }
+}

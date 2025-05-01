@@ -1,5 +1,15 @@
 @use 'variables';
 
+:root{
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
 
 .light-theme {
   --text-color: variables.$light-text-color;
