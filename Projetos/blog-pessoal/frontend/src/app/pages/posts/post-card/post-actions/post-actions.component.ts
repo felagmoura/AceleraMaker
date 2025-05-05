@@ -8,10 +8,14 @@ import { CommonModule } from '@angular/common';
   styleUrl: './post-actions.component.scss',
 })
 export class PostActionsComponent {
-  @Input({ required: true }) postId!: string;
-  @Input({ required: true}) isDraft!: boolean;
+  @Input({ required: true }) postId!: number;
+  @Input({ required: true }) isDraft!: boolean;
 
-  @Output() edit = new EventEmitter<void>();
-  @Output() view = new EventEmitter<void>();
-  @Output() delete = new EventEmitter<void>();
+  @Output() edit = new EventEmitter<number>();
+  @Output() view = new EventEmitter<number>();
+  @Output() delete = new EventEmitter<number>();
+
+  onDelete() {
+    this.delete.emit(this.postId);
+  }
 }

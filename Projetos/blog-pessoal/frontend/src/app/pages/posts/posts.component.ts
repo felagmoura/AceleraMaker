@@ -34,8 +34,8 @@ export class PostsComponent {
     );
   };
 
-  handleDeletePost(postId: string) {
-    this.postService.deletePost(postId.toString()).subscribe({
+  handleDeletePost(postId: number) {
+    this.postService.deletePost(postId).subscribe({
       next: () => {
         const updatedPosts = this.posts().filter((p) => p.id !== postId);
         console.log('Post deleted successfully');

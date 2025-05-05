@@ -1,1 +1,7 @@
-<p>publish-button works!</p>
+<button
+  class="publish-button"
+  (click)="publish.emit()"
+  [disabled]="isDisabled || isLoading"
+>
+  {{ isLoading ? 'Publicando...' : 'Publicar' }}
+</button>

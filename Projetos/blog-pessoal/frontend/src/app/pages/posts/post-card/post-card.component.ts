@@ -19,15 +19,7 @@ import { PostActionsComponent } from './post-actions/post-actions.component';
 export class PostCardComponent {
   @Input({ required: true }) post!: Post;
 
-  @Output() edit = new EventEmitter<void>();
-  @Output() delete = new EventEmitter<void>();
+  @Output() edit = new EventEmitter<number>();
+  @Output() delete = new EventEmitter<number>();
   @Output() view = new EventEmitter<void>();
-
-  handleEdit() {
-    this.edit.emit();
-  }
-
-  handleDelete() {
-    this.delete.emit();
-  }
 }

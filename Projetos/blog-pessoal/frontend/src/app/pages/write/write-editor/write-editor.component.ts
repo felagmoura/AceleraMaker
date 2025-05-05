@@ -11,15 +11,17 @@ export class WriteEditorComponent {
   @Input() texto = '';
   @Output() tituloChange = new EventEmitter<string>();
   @Output() textoChange = new EventEmitter<string>();
-  //@Output() contentChange = new EventEmitter<string>();
+  @Output() contentChange = new EventEmitter<void>();
 
   onTituloChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.tituloChange.emit(value);
+    this.contentChange.emit();
   }
 
   onTextoChange(event: Event): void {
     const value = (event.target as HTMLTextAreaElement).value;
     this.textoChange.emit(value);
+    this.contentChange.emit();
   }
 }

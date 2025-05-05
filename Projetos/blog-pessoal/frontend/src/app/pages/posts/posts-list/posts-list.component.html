@@ -3,7 +3,7 @@
     @for (post of posts; track post.id) {
       <app-post-card
         [post]="post"
-        (delete)="deletePost.emit(post.id)"
+        (delete)="deletePost.emit($event)"
         (edit)="editPost.emit(post.id)"
       />
     }

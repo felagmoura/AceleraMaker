@@ -1,7 +1,7 @@
 import { Injectable, PLATFORM_ID, computed, inject, signal, afterNextRender } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, catchError, tap, throwError, map, of, switchMap, delay } from 'rxjs';
+import { Observable, catchError, tap, throwError, map, of, switchMap, delay, retry } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { User } from '../models/user'
 
@@ -16,6 +16,8 @@ interface AuthResponse {
 export class AuthService {
   private readonly storageKey = 'blog_auth';
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly _initialized = signal(false);
+  readonly initialized = this._initialized.asReadonly();
   private _token = signal<string | null>(null);
   private _user = signal<User | null>(null);
 
@@ -25,11 +27,10 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {
     this.initializeFromSecureStorage();
     if (isPlatformBrowser(this.platformId)) {
-      setInterval(() => {
-        if (this._token() && this.isTokenExpired(this._token()!)) {
-          this.logout();
-        }
-      }, 60000);
+      afterNextRender(() => {
+        this.initializeFromSecureStorage();
+        this._initialized.set(true);
+      });
     }
   }
 
@@ -40,55 +41,124 @@ export class AuthService {
   private initializeFromSecureStorage(): void {
     try {
       const storedData = this.storage?.getItem(this.storageKey);
-      if (!storedData) return;
+      if (!storedData) {
+        this.clearAuthState();
+        return;
+      }
 
       const { token, user, timestamp } = JSON.parse(storedData);
 
-      if (timestamp && Date.now() - timestamp > 1000 * 60 * 60 * 8) {
+      if (!token || !user || !timestamp) {
         this.clearSecureStorage();
         return;
       }
 
-      if (token && user) {
-        this._token.set(token);
-        this._user.set(user);
+      if (this.isTokenExpired(token)) {
+        this.clearSecureStorage();
+        return;
       }
+
+      this._token.set(token);
+      this._user.set(user);
     } catch (e) {
       this.clearSecureStorage();
     }
   }
 
   private setSecureStorage(token: string, user: User): void {
-    const storageData = {
-      token,
-      user,
-      timestamp: Date.now(),
-    };
-    this.storage?.setItem(this.storageKey, JSON.stringify(storageData));
+    try {
+      console.log('Storage operation:', {
+        key: this.storageKey,
+        value: { token: token.slice(0, 10) + '...', user },
+        storageSupported: !!this.storage,
+      });
+
+      if (!this.storage) throw new Error('No Storage Available');
+
+      const storageData = {
+        token,
+        user,
+        timestamp: Date.now(),
+      };
+
+      this.storage.setItem(this.storageKey, JSON.stringify(storageData));
+
+      if (this.storage.getItem(this.storageKey) === null) {
+        throw new Error('Storage write failed');
+      }
+    } catch (e) {
+      console.error('Storage operation failed', e);
+      this._token.set(token);
+      this._user.set(user);
+    }
   }
 
   private clearSecureStorage(): void {
     this.storage?.removeItem(this.storageKey);
   }
 
-  login(credentials: { usuario: string; senha: string }): Observable<void> {
-    return this.http
-      .post<AuthResponse>('http://localhost:8080/api/auth/login', credentials)
-      .pipe(
-        switchMap((authResponse) =>
-          this.fetchUserData(credentials.usuario).pipe(
-            map((user) => ({ authResponse, user }))
-          )
-        ),
-        tap(({ authResponse, user }) => {
-          this._token.set(authResponse.token);
-          this._user.set(user);
-          this.setSecureStorage(authResponse.token, user);
-        }),
-        map(() => undefined),
-        catchError((error) => this.handleAuthError(error))
-      );
+  private handleAuthToken (token: string, initialUser: Partial<User>): Observable<User> {
+    if (!this.validateToken(token)) {
+      return throwError(() => new Error('Invalid Token'));
+    }
+
+    this._token.set(token);
+    this.setSecureStorage(token, initialUser as User);
+
+    return this.fetchUserData(initialUser.usuario!).pipe(
+      tap(fullUser => {
+        this._user.set(fullUser);
+        this.setSecureStorage(token, fullUser)
+      })
+    )
   }
+
+  login (credentials: { usuario: string; senha: string }): Observable<void> {
+    return this.http.post<AuthResponse>('http://localhost:8080/api/auth/login', credentials).pipe(
+      switchMap(res => this.handleAuthToken(
+        res.token,
+        { usuario: credentials.usuario }
+      )),
+      map(() => undefined),
+      catchError(this.handleAuthError)
+    );
+  }
+  // login(credentials: { usuario: string; senha: string }): Observable<void> {
+  //   return this.http
+  //     .post<AuthResponse>('http://localhost:8080/api/auth/login', credentials)
+  //     .pipe(
+  //       switchMap(authResponse => {
+  //         if (!this.validateToken(authResponse.token)) {
+  //           return throwError(() => new Error('Invalid token received from server'));
+  //         }
+
+  //         this._token.set(authResponse.token);
+  //         try {
+  //           this.setSecureStorage(authResponse.token, {
+  //             usuario: credentials.usuario
+  //           });
+  //         } catch (e) {
+  //           console.error('Token Storage Failed', e);
+  //           return throwError(() => new Error('Could not persist session'))
+  //         }
+
+  //         return this.fetchUserData(credentials.usuario).pipe(
+  //           tap(user => {
+  //             this._user.set(user);
+  //             this.setSecureStorage(authResponse.token, user);
+  //           })
+  //         );
+  //       }),
+
+  //       map(() => undefined),
+
+  //       catchError(error => {
+  //         console.error('Login error:', error);
+  //         this.clearAuthState();
+  //         return throwError(() => error);
+  //       })
+  //     );
+  // }
 
   register(userData: {
     nome: string;
@@ -98,35 +168,35 @@ export class AuthService {
   }): Observable<void> {
     return this.http
       .post<AuthResponse>('http://localhost:8080/api/auth/register', userData)
-      .pipe(
-        switchMap((authResponse) =>
-          this.fetchUserData(userData.usuario).pipe(
-            map((user) => ({ authResponse, user }))
-          )
-        ),
-        tap(({ authResponse, user }) => {
-          this._token.set(authResponse.token);
-          this._user.set(user);
-          this.setSecureStorage(authResponse.token, user);
-        }),
-        map(() => undefined),
-        catchError((error) => this.handleAuthError(error))
-      );
+        .pipe(
+          switchMap(res => this.handleAuthToken(
+            res.token,
+            {
+              nome: userData.nome,
+              usuario: userData.usuario,
+              foto: userData.foto
+            }
+          )),
+          map(() => undefined),
+          catchError(this.handleAuthError)
+        )
   }
 
   private fetchUserData(usuario: string): Observable<User> {
+    console.log('Pre-fetch state:', {
+      token: this.getToken(),
+      tokenValid: this.validateToken(this.getToken()),
+      storageContent: this.storage?.getItem(this.storageKey),
+    });
     return this.http
       .get<User>(
         `http://localhost:8080/api/usuario/buscar-por-usuario/${usuario}`
       )
       .pipe(
+        retry(2),
         catchError((error) => {
-          console.error('Failed to fetch user data:', error);
-          return of({
-            nome: 'Unknown',
-            usuario: usuario,
-            foto: '',
-          });
+          this.clearAuthState();
+          return throwError(() => new Error('Failed to fetch user data'));
         })
       );
   }
@@ -152,16 +222,32 @@ export class AuthService {
 
   private isTokenExpired(token: string): boolean {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp * 1000 < Date.now();
+      const payload = this.decodeToken(token);
+      return payload.exp * 1000 < Date.now() + 30000;
     } catch {
       return true;
     }
   }
 
-  validateToken(): boolean {
-    const token = this._token();
-    return !!token && !this.isTokenExpired(token);
+  private decodeToken(token: string): any {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (typeof payload.exp !== 'number') throw new Error('Invalid exp');
+      return payload;
+    } catch (e) {
+      console.error('Token decode failed', e);
+      throw new Error('Invalid token');
+    }
+  }
+
+  validateToken(token: string | null): token is string {
+    if (!token) return false;
+    try {
+      const payload = this.decodeToken(token);
+      return payload.exp > Date.now() / 1000;
+    } catch {
+      return false;
+    }
   }
 
   private clearAuthState(): void {
@@ -170,7 +256,8 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return this._token();
+    const token = this._token();
+    return this.validateToken(token) ? token : null;
   }
 
   refreshUserData(): Observable<void> {

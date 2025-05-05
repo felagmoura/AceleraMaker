@@ -30,27 +30,40 @@ export class PostService {
   }
 
   createPost(postData: PostCreateDTO, asDraft: boolean): Observable<Post> {
-    return asDraft
-      ? of(this.saveDraft(postData))
-      : this.publishDraft(this.saveDraft(postData).id);
+    console.log('Sending Payload:', JSON.stringify(postData));
+    if (asDraft) {
+      return of(this.saveDraft(postData)).pipe(
+        catchError((err) => {
+          console.error('Draft save failed', err);
+          return throwError(() => new Error('Save Draft Error'));
+        })
+      );
+    }
+    console.log(postData);
+    return this.http.post<Post>(`${this.apiUrl}/criar`, postData).pipe(
+      catchError((err) => {
+        console.error('Publish Failed', err);
+        return throwError(() => new Error('Publish Error'));
+      })
+    );
   }
 
   updatePost(
-    id: string,
+    id: number,
     postData: PostCreateDTO,
     asDraft: boolean
   ): Observable<Post> {
     return asDraft ? of(this.saveDraft(postData, id)) : this.publishDraft(id);
   }
 
-  deletePost(id: string): Observable<void> {
+  deletePost(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => this.deleteDraft(id)),
       catchError((error) => throwError(() => new Error('Failed to delete')))
     );
   }
 
-  private publishDraft(draftId: string): Observable<Post> {
+  private publishDraft(draftId: number): Observable<Post> {
     const draft = this.getUserDrafts().find((d) => d.id === draftId);
     if (!draft) return throwError(() => new Error('Draft not found'));
 
@@ -68,24 +81,50 @@ export class PostService {
       );
   }
 
-  private saveDraft(postData: PostCreateDTO, id?: string): Post {
+  saveDraft(postData: PostCreateDTO): Observable<Post> {
+    return of(this.saveDraftToLocalStorage(postData)).pipe(
+      catchError((err) => {
+        console.error('Draft save failed', err);
+        return throwError(() => new Error('DRAFT_SAVE_ERROR'));
+      })
+    );
+  }
+
+  private saveDraftToLocalStorage(postData: PostCreateDTO): Post {
     const drafts = this.getUserDrafts();
     const draft: Post = {
-      id: id || this.generateId(),
+      id: this.generateId(),
       ...postData,
       isDraft: true,
       dataCriacao: new Date(),
-      usuarioId: this.authService.currentUser()?.usuario!,
+      usuarioId: this.authService.currentUser()?.id!,
     };
 
     localStorage.setItem(
       `${this.draftsKey}_${this.authService.currentUser()?.usuario}`,
-      JSON.stringify(
-        id ? drafts.map((d) => (d.id === id ? draft : d)) : [...drafts, draft]
-      )
+      JSON.stringify([...drafts, draft])
     );
     return draft;
   }
+
+  // private saveDraft(postData: PostCreateDTO, id?: number): Post {
+  //   const drafts = this.getUserDrafts();
+  //   const draft: Post = {
+  //     id: id || this.generateId(),
+  //     ...postData,
+  //     isDraft: true,
+  //     dataCriacao: new Date(),
+  //     usuarioId: this.authService.currentUser()?.id!,
+  //   };
+
+  //   localStorage.setItem(
+  //     `${this.draftsKey}_${this.authService.currentUser()?.usuario}`,
+  //     JSON.stringify(
+  //       id ? drafts.map((d) => (d.id === id ? draft : d)) : [...drafts, draft]
+  //     )
+  //   );
+  //   return draft;
+  // }
 
   private getUserDrafts(): Post[] {
     const user = this.authService.currentUser();
@@ -95,7 +134,7 @@ export class PostService {
     return drafts ? JSON.parse(drafts) : [];
   }
 
-  private deleteDraft(id: string): void {
+  private deleteDraft(id: number): void {
     const drafts = this.getUserDrafts().filter((d) => d.id !== id);
     if (this.authService.currentUser()) {
       localStorage.setItem(
@@ -105,7 +144,7 @@ export class PostService {
     }
   }
 
-  private generateId(): string {
-    return Math.random().toString(36).substring(2, 11);
+  private generateId(): number {
+    return Math.random();
   }
 }

@@ -6,7 +6,11 @@
       </a>
     </div>
     <div class="conditional-content-container">
-
+      <app-publish-button
+        [isDisabled]="!canPublish()"
+        [isLoading]="isLoading()"
+        (publish)="onPublish.emit()"
+      />
     </div>
     <div class="user-container">
       <app-user-icon

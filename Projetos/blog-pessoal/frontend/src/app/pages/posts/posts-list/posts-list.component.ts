@@ -12,6 +12,10 @@ import { PostCardComponent } from '../post-card/post-card.component';
 export class PostsListComponent {
   @Input() posts: Post[] = [];
 
-  @Output() editPost = new EventEmitter<string>();
-  @Output() deletePost = new EventEmitter<string>();
+  @Output() editPost = new EventEmitter<number>();
+  @Output() deletePost = new EventEmitter<number>();
+
+  onDelete(postId:number) {
+    this.deletePost.emit(postId);
+  }
 }

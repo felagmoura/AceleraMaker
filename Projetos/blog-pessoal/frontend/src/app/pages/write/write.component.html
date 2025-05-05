@@ -1,7 +1,15 @@
-<app-header></app-header>
+<app-header
+  [canPublish]="canPublish"
+  [isLoading]="isLoading"
+  (onPublish)="onPublish()"
+/>
+<div class="save-status">
+  {{ isSaving() ? 'Salvando... ' : 'Rascunho Salvo' }}
+</div>
 <app-write-editor
   [titulo]="titulo"
   [texto]="texto"
   (tituloChange)="titulo = $event"
   (textoChange)="texto = $event"
+  (contentChange)="onContentChange()"
 />

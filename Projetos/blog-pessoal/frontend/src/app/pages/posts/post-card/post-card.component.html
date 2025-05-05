@@ -4,7 +4,7 @@
   <app-post-actions
         [postId]="post.id"
         [isDraft]="post.isDraft"
-        (edit)="handleEdit()"
-        (delete)="handleDelete()"
+        (edit)="edit.emit()"
+        (delete)="delete.emit($event)"
       />
 </div>

@@ -1,9 +1,9 @@
 export interface Post {
-  id: string;
+  id: number;
   titulo: string;
   texto: string;
-  usuarioId: string;
-  temaId: string;
+  usuarioId: number;
+  temaId?: number;
   dataCriacao: Date;
   isDraft: boolean;
 }
