@@ -1,6 +1,6 @@
 <div class="app-post-actions">
   <div class="app-post-actions">
-      <button (click)="edit.emit()">
+      <button (click)="onEdit()">
         {{ isDraft ? 'Continue Writing' : 'Edit' }}
       </button>
       @if (!isDraft) {

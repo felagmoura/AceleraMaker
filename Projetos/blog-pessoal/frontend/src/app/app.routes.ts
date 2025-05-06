@@ -5,15 +5,20 @@ import { WriteComponent } from './pages/write/write.component'
 import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
-  {path: '', component: HomeComponent},
+  { path: '', component: HomeComponent },
   {
     path: 'posts',
     component: PostsComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
   {
     path: 'write',
     component: WriteComponent,
-    canActivate: [authGuard]
-  }
+    canActivate: [authGuard],
+  },
+  {
+    path: 'write/:id',
+    component: WriteComponent,
+    canActivate: [authGuard],
+  },
 ];

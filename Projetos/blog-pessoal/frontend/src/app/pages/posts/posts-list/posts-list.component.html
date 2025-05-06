@@ -4,7 +4,7 @@
       <app-post-card
         [post]="post"
         (delete)="deletePost.emit($event)"
-        (edit)="editPost.emit(post.id)"
+        (edit)="editPost.emit($event)"
       />
     }
   </div>

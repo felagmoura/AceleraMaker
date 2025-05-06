@@ -15,6 +15,10 @@ export class PostActionsComponent {
   @Output() view = new EventEmitter<number>();
   @Output() delete = new EventEmitter<number>();
 
+  onEdit() {
+    this.edit.emit(this.postId);
+  }
+
   onDelete() {
     this.delete.emit(this.postId);
   }

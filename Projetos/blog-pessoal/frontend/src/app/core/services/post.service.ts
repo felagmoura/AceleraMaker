@@ -16,7 +16,7 @@ export class PostService {
   getPosts(): Observable<Post[]> {
     return this.http
       .get<Post[]>(
-        `${this.apiUrl}/filtrar?nomeUsuario=${encodeURIComponent(
+        `${this.apiUrl}/filtrar?usuarioUsuario=${encodeURIComponent(
           this.authService.currentUser()?.usuario || ''
         )}`
       )
@@ -32,14 +32,22 @@ export class PostService {
   createPost(postData: PostCreateDTO, asDraft: boolean): Observable<Post> {
     console.log('Sending Payload:', JSON.stringify(postData));
     if (asDraft) {
-      return of(this.saveDraft(postData)).pipe(
+      return new Observable<Post>((subscriber) => {
+        try {
+          const savedDraft = this.saveDraftToLocalStorage(postData);
+          subscriber.next(savedDraft);
+          subscriber.complete();
+        } catch (err) {
+          subscriber.error(err);
+        }
+      }).pipe(
         catchError((err) => {
           console.error('Draft save failed', err);
-          return throwError(() => new Error('Save Draft Error'));
+          return throwError(() => new Error('DRAFT_SAVE_ERROR'));
         })
       );
     }
-    console.log(postData);
+
     return this.http.post<Post>(`${this.apiUrl}/criar`, postData).pipe(
       catchError((err) => {
         console.error('Publish Failed', err);
@@ -53,14 +61,37 @@ export class PostService {
     postData: PostCreateDTO,
     asDraft: boolean
   ): Observable<Post> {
-    return asDraft ? of(this.saveDraft(postData, id)) : this.publishDraft(id);
+    if (asDraft) {
+      return new Observable<Post>((subscriber) => {
+        try {
+          const updatedDraft = this.updateDraftInLocalStorage(id, postData);
+          subscriber.next(updatedDraft);
+          subscriber.complete();
+        } catch (err) {
+          subscriber.error(err);
+        }
+      });
+    }
+    return this.http.put<Post>(`${this.apiUrl}/${id}`, postData);
   }
 
   deletePost(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => this.deleteDraft(id)),
-      catchError((error) => throwError(() => new Error('Failed to delete')))
-    );
+    const draft = this.getDraftById(id);
+    if (draft?.isDraft) {
+      this.deleteDraft(id);
+      return of (undefined);
+    } else {
+      return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+        catchError(error => {
+          console.error('Failed to delete published post:', error);
+          return throwError(() => new Error('Failed to delete'))
+        })
+      );
+    }
+  }
+
+  getDraftById(id: number): Post | undefined {
+    return this.getUserDrafts().find((draft) => draft.id === id);
   }
 
   private publishDraft(draftId: number): Observable<Post> {
@@ -107,24 +138,28 @@ export class PostService {
     return draft;
   }
 
-  // private saveDraft(postData: PostCreateDTO, id?: number): Post {
-  //   const drafts = this.getUserDrafts();
-  //   const draft: Post = {
-  //     id: id || this.generateId(),
-  //     ...postData,
-  //     isDraft: true,
-  //     dataCriacao: new Date(),
-  //     usuarioId: this.authService.currentUser()?.id!,
-  //   };
+  private updateDraftInLocalStorage(id: number, postData: PostCreateDTO): Post {
+    const drafts = this.getUserDrafts();
+    const draftIndex = drafts.findIndex((d) => d.id === id);
 
-  //   localStorage.setItem(
-  //     `${this.draftsKey}_${this.authService.currentUser()?.usuario}`,
-  //     JSON.stringify(
-  //       id ? drafts.map((d) => (d.id === id ? draft : d)) : [...drafts, draft]
-  //     )
-  //   );
-  //   return draft;
-  // }
+    if (draftIndex === -1) {
+      throw new Error('Draft not found');
+    }
+
+    const updatedDraft: Post = {
+      ...drafts[draftIndex],
+      ...postData,
+      dataCriacao: new Date(), // Update last modified time
+    };
+
+    drafts[draftIndex] = updatedDraft;
+    localStorage.setItem(
+      `${this.draftsKey}_${this.authService.currentUser()?.usuario}`,
+      JSON.stringify(drafts)
+    );
+
+    return updatedDraft;
+  }
 
   private getUserDrafts(): Post[] {
     const user = this.authService.currentUser();
@@ -136,9 +171,11 @@ export class PostService {
 
   private deleteDraft(id: number): void {
     const drafts = this.getUserDrafts().filter((d) => d.id !== id);
-    if (this.authService.currentUser()) {
+    const user = this.authService.currentUser();
+
+    if (user) {
       localStorage.setItem(
-        `${this.draftsKey}_${this.authService.currentUser()?.usuario}`,
+        `${this.draftsKey}_${user?.usuario}`,
         JSON.stringify(drafts)
       );
     }

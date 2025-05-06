@@ -4,6 +4,12 @@
   (tabChange)="selectedTab.set($event)"
   [activeTab]="selectedTab()"
 ></app-posts-nav-tabs>
-<app-posts-list
-  [posts]="filteredPosts()"
-></app-posts-list>
+@if (isLoading()) {
+  <div class="loading-spinner">Loading...</div>
+} @else {
+  <app-posts-list
+    [posts]="filteredPosts()"
+    (deletePost)="handleDeletePost($event)"
+    (editPost)="handleEditPost($event)"
+  ></app-posts-list>
+}

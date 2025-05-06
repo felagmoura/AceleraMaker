@@ -14,8 +14,4 @@ export class PostsListComponent {
 
   @Output() editPost = new EventEmitter<number>();
   @Output() deletePost = new EventEmitter<number>();
-
-  onDelete(postId:number) {
-    this.deletePost.emit(postId);
-  }
 }
