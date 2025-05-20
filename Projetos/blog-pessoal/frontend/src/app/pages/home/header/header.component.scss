@@ -14,11 +14,7 @@
     padding: 1rem 2rem;
     font-family: 'Segoe UI', sans-serif;
 
-    .left {
-      .logo {
-        height: 32px;
-      }
-    }
+
 
     .center {
       display: flex;
@@ -71,6 +67,20 @@
           background-color: #333;
         }
       }
+    }
+  }
+}
+
+.logo-container {
+  flex: 1;
+
+  .logo {
+    display: flex;
+    align-items: center;
+
+    img {
+      height: 24px;
+      width: auto;
     }
   }
 }

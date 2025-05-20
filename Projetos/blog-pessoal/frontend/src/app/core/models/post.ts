@@ -6,4 +6,6 @@ export interface Post {
   temaId?: number;
   dataCriacao: Date;
   isDraft: boolean;
+  isEditDraft?: boolean;
+  publishPostId?: number;
 }

@@ -77,8 +77,16 @@ export class PostsComponent {
   }
 
   handleEditPost(postId: number): void {
-    const post = this.postService.getDraftById(postId);
-    if (post) {
+    const post = this.postsList().find((p) => p.id === postId);
+    if (!post) return;
+
+    // For published posts, get/create edit draft
+    if (!post.isDraft) {
+      const draft = this.postService.createOrGetEditDraft(post);
+      this.router.navigate(['/write', draft.id]);
+    }
+    // For regular drafts, edit directly
+    else {
       this.router.navigate(['/write', postId]);
     }
   }

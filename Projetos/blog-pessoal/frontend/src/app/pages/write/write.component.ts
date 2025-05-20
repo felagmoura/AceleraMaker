@@ -6,6 +6,7 @@ import { PostCreateDTO } from '../../core/models/post-create-dto';
 import { WriteEditorComponent } from './write-editor/write-editor.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-write',
@@ -18,6 +19,11 @@ export class WriteComponent {
   texto = '';
   temaId = 0;
   data = new Date();
+
+  currentDraftId!: number;
+
+  editingPublishedPost = false;
+  originalPostId?: number;
 
   private lastSavedContent = {
     titulo: '',
@@ -65,19 +71,27 @@ export class WriteComponent {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
-      const draftId = params.get('id');
+      const postId = params.get('id');
+      if (!postId) {
+        this.router.navigate(['/posts']);
+        return;
+      }
 
-      if (draftId) {
-        const draft = this.postService.getDraftById(+draftId);
-        if (draft) {
-          this.editingDraftId = draft.id;
-          this.titulo = draft.titulo;
-          this.texto = draft.texto;
-          //this.temaId = draft.temaId;
-          console.log('Loaded draft:', draft); // DEBUG
-        } else {
-          console.warn('Draft not found, creating new post');
+      this.currentDraftId = +postId;
+      const draft = this.postService.getDraftById(this.currentDraftId);
+
+      if (draft) {
+        // Check if this is an edit draft
+        if (draft.publishPostId) {
+          this.editingPublishedPost = true;
+          this.originalPostId = draft.publishPostId;
         }
+
+        this.titulo = draft.titulo;
+        this.texto = draft.texto;
+        this.updateLastSavedState();
+      } else {
+        this.router.navigate(['/posts']);
       }
     });
   }
@@ -92,34 +106,41 @@ export class WriteComponent {
 
   onPublish(): void {
     const userId = this.authService.currentUser()?.id;
-    if (!userId) {
-      alert('User not authenticated!');
-      return;
-    }
+    if (!userId) return;
 
     this.isLoading.set(true);
     const postData: PostCreateDTO = {
       titulo: this.titulo,
       texto: this.texto,
       usuarioId: userId,
-      //temaId: this.temaId,
     };
 
-    this.postService.createPost(postData, false).subscribe({
-      next: () => {
-        if (this.editingDraftId) {
-          this.postService.deletePost(this.editingDraftId).subscribe({
-            error: (err) => console.error('Draft cleanup failed:', err),
-          });
-        }
-        this.newDraftId = null;
-        this.router.navigate(['/posts']);
-      },
-      error: (err) => {
-        console.error('Publish failed:', err);
-        this.isLoading.set(false);
-      },
-    });
+    // If editing a published post
+    if (this.originalPostId) {
+      this.postService
+        .updatePost(this.originalPostId, postData, false)
+        .pipe(finalize(() => this.isLoading.set(false)))
+        .subscribe({
+          next: () => this.handlePublishSuccess(),
+          error: (err) => console.error('Update failed:', err),
+        });
+    }
+    // If creating new post
+    else {
+      this.postService
+        .createPost(postData, false)
+        .pipe(finalize(() => this.isLoading.set(false)))
+        .subscribe({
+          next: () => this.handlePublishSuccess(),
+          error: (err) => console.error('Publish failed:', err),
+        });
+    }
+  }
+
+  private handlePublishSuccess(): void {
+    // Clean up the draft (whether it's an edit draft or regular draft)
+    this.postService.deletePost(this.currentDraftId).subscribe();
+    this.router.navigate(['/posts']);
   }
 
   private SaveDraft(): void {
@@ -138,21 +159,8 @@ export class WriteComponent {
       usuarioId: userId,
     };
 
-    const draftIdToUpdate = this.editingDraftId || this.newDraftId;
-    const saveOperation = this.editingDraftId
-      ? this.postService.updatePost(
-          this.editingDraftId || this.newDraftId!,
-          postData,
-          true
-        )
-      : this.postService.createPost(postData, true);
-
-    saveOperation.subscribe({
-      next: (savedDraft) => {
-        if (!this.editingDraftId && !this.newDraftId) {
-          this.newDraftId = savedDraft.id;
-        }
-
+    this.postService.updatePost(this.currentDraftId, postData, true).subscribe({
+      next: () => {
         this.updateLastSavedState();
         this.isSaving.set(false);
       },
