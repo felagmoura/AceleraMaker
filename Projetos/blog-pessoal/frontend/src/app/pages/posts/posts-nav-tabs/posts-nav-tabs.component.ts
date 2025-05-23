@@ -12,9 +12,6 @@ export class PostsNavTabsComponent {
   @Output() tabChange = new EventEmitter<'published' | 'drafts'>();
 
   getTabClass(tab: 'published' | 'drafts'): string {
-    const baseClass = 'pb-2 border-b-2';
-    return tab === this.activeTab
-      ? `${baseClass} text-black font-semibold border-black`
-      : `${baseClass} text-gray-500 hover:text-gray-800 border-transparent`;
+    return tab === this.activeTab ? 'active' : '';
   }
 }

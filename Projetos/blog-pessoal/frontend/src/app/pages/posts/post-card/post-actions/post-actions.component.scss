@@ -1,0 +1,46 @@
+@use '../../../../../styles/variables';
+
+.post-actions {
+  position: absolute;
+  top: 16px;
+  right: 0;
+  display: flex;
+  gap: 8px;
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: variables.$dark-text-color;
+    padding: 0;
+    outline: none;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: rgba(0, 0, 0, 0.8);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1); // Custom focus indicator
+    }
+
+    svg {
+      display: block;
+    }
+  }
+
+  .edit-btn:hover {
+    color: variables.$dark-primary-color;
+  }
+
+  .delete-btn:hover {
+    color: #d93737;
+  }
+}
+

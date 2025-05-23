@@ -1,3 +1,8 @@
-<h2 class="post-card-title">
+<h2 class="post-title">
   {{ titulo }}
 </h2>
+@if (texto) {
+  <p class="post-snippet">
+    {{ getTextSnippet(texto) }}
+  </p>
+}

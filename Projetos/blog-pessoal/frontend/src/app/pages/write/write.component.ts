@@ -36,6 +36,8 @@ export class WriteComponent {
   isLoading = signal(false);
   isSaving = signal(false);
 
+  private saveCompleteTimer: any;
+
   private destroy$ = new Subject<void>();
   private saveTrigger$ = new Subject<void>();
 
@@ -56,13 +58,31 @@ export class WriteComponent {
         takeUntil(this.destroy$)
       )
       .subscribe(() => {
-        if (this.hasUnsavedChanges()) {
+        if (this.checkForUnsavedChanges()) {
           this.SaveDraft();
         }
       });
   }
 
-  private hasUnsavedChanges(): boolean {
+  get username(): string {
+    const username = this.authService.currentUser()?.usuario;
+    return username || '';
+  }
+
+  get hasUnsavedChanges(): boolean {
+    return this.checkForUnsavedChanges();
+  }
+
+  get isNewEmptyDraft(): boolean {
+    return (
+      !this.titulo &&
+      !this.texto &&
+      !this.lastSavedContent.titulo &&
+      !this.lastSavedContent.texto
+    );
+  }
+
+  private checkForUnsavedChanges(): boolean {
     return (
       this.titulo !== this.lastSavedContent.titulo ||
       this.texto !== this.lastSavedContent.texto
@@ -138,13 +158,12 @@ export class WriteComponent {
   }
 
   private handlePublishSuccess(): void {
-    // Clean up the draft (whether it's an edit draft or regular draft)
     this.postService.deletePost(this.currentDraftId).subscribe();
     this.router.navigate(['/posts']);
   }
 
   private SaveDraft(): void {
-    if (!this.hasUnsavedChanges()) return;
+    if (!this.checkForUnsavedChanges()) return;
 
     this.isSaving.set(true);
     const userId = this.authService.currentUser()?.id;

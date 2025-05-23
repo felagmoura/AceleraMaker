@@ -9,4 +9,10 @@ import { CommonModule } from '@angular/common';
 })
 export class PostTitleComponent {
   @Input() titulo!: string;
+  @Input() texto?: string;
+
+  getTextSnippet(fullText: string): string {
+    const snippet = fullText.slice(0, 100);
+    return snippet.slice(0, snippet.lastIndexOf(' ')) + '...';
+  }
 }

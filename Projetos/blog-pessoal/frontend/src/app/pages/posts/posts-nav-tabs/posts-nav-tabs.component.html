@@ -1,16 +1,18 @@
-<div class="posts-nav-tabs">
-  <nav>
+<div class="nav-tabs-container">
+  <nav class="nav-tabs">
     <button
       (click)="tabChange.emit('published')"
       [class]="getTabClass('published')"
+      aria-label="Published posts"
     >
-      Publicados
+      Published
     </button>
     <button
       (click)="tabChange.emit('drafts')"
       [class]="getTabClass('drafts')"
+      aria-label="Draft posts"
     >
-      Rascunhos
+      Drafts
     </button>
   </nav>
 </div>

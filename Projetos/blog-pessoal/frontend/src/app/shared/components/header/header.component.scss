@@ -24,7 +24,7 @@
 }
 
 .logo-container {
-  flex: 1;
+  flex: 0 0 auto;
 
   .logo {
     display: flex;
@@ -37,14 +37,47 @@
   }
 }
 
-.conditional-content-container {
-  flex: 2;
+.editor-header-info {
+  flex: 1;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 0 24px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+
+  .divider {
+    opacity: 0.5;
+  }
+}
+
+.actions-container {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .publish-btn {
+    margin-right: 8px;
+  }
 }
 
 .user-container {
   flex: 1;
   display: flex;
   justify-content: flex-end;
+}
+
+.draft-info {
+  margin-right: 1rem;
+  color: #6b6b6b;
+  font-size: 0.9rem;
+}
+
+.save-status {
+  margin-right: 1rem;
+  color: #6b6b6b;
+  font-size: 0.9rem;
+  font-style: italic;
 }

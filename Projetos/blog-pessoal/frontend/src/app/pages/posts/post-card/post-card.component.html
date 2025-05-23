@@ -1,6 +1,9 @@
 <div class="post-card">
   <app-post-meta [post]="post" />
-  <app-post-title [titulo]="post.titulo" />
+  <app-post-title
+    [titulo]="post.titulo"
+    [texto]="post.texto"
+  />
   <app-post-actions
         [postId]="post.id"
         [isDraft]="post.isDraft"

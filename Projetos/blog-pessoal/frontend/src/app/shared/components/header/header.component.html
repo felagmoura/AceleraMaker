@@ -5,20 +5,34 @@
         <img src="assets/images/logo.png" alt="Logo" />
       </a>
     </div>
-    <div class="conditional-content-container">
-      <app-publish-button
-        [isDisabled]="!canPublish()"
-        [isLoading]="isLoading()"
-        (publish)="onPublish.emit()"
-      />
-    </div>
-    <div class="user-container">
+
+    @if (isWritePage) {
+      <div class="editor-header-info">
+        <span class="draft-info" *ngIf="username">
+          Draft by {{ username }}
+        </span>
+        <span class="divider">•</span>
+        <span class="save-status">
+          <span *ngIf="isSaving">Saving...</span>
+          <span *ngIf="!isSaving && !hasUnsavedChanges">Saved</span>
+        </span>
+      </div>
+    }
+
+    <div class="actions-container">
+      @if (isWritePage) {
+        <app-publish-button
+          class="publish-btn"
+          [isDisabled]="!canPublish()"
+          [isLoading]="isLoading()"
+          (publish)="onPublish.emit()"
+        />
+      }
       <app-user-icon
         [user]="currentUser()"
         (signOut)="handleSignOut()"
         (navigate)="handleNavigation($event)"
       />
     </div>
-
   </div>
 </header>
