@@ -8,12 +8,24 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: variables.$spacing-md;
+  padding: 0;
   border-radius: 50%;
-  transition: background-color 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.2s ease;
 
   &:hover {
-    //background-color: rgba(255, 255, 255, 0.1);
+    .profile-image, .default-avatar {
+      filter: brightness(0.9);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(0, 0, 0, 0.2);
+    outline-offset: 2px;
   }
 
   .profile-image {
@@ -21,6 +33,7 @@
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
+    transition: filter 0.2s ease;
   }
 
   .default-avatar {
@@ -32,7 +45,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: variables.$font-size-xs;
-    font-weight: 400;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: filter 0.2s ease;
   }
 }
